@@ -31,19 +31,25 @@
       
         <div class="w-full mt-1 flex justify-center">
             <div v-if="navigation['list']"  class="  w-full box-height    overflow-y-scroll">
-                <div v-for="i in 10" :key="i"  class="border-2 box border-gray-300 bg-white block mx-auto h-32 mt-2">
+                <div v-for="customer in customers" :key="customer.uid"  class="border-2 box border-gray-300 bg-white block mx-auto h-32 mt-2">
                     <div class="w-full flex justify-between">
-                        <span class="text-gray-500 px-2 py-1">Consumer Information</span>
-                        <span class="px-3 py-1 font-bold">#2132</span>
+                        <span class="text-gray-500 px-2 py-1 text-sm">Consumer Information</span>
+                        <span class="px-3 py-1 font-bold">{{ customer.meter_id }}</span>
 
                     </div>
-                    <div>
-                        <span class="block px-2 text-2xl font-bold">Angelo Mayuga</span>
-                        <span class="px-2 text-blue-500"><i class="bi bi-geo-alt-fill"></i> Sitio 5 Bagong Buhay</span>
+                    <div class="flex justify-between">
+                    <div class="">
+                        <span class="block px-2 -mt-2 text-lg font-bold">{{ customer.first_name }} {{ customer.last_name }}</span>
+                        <span class="px-2 text-blue-500 text-sm"><i class="bi bi-geo-alt-fill"></i> Sitio 5</span>
                     </div>
+                    <div  class="mr-4 mt-3">
+                        <button class="px-3 bg-gray-500 py-1 text-sm text-white rounded"><i class="bi bi-graph-up-arrow"></i> History</button>&nbsp;
+                        <button class="px-3 py-1 bg-blue-500 rounded text-sm  text-white"><i class="bi bi-check2-square"></i> Select</button>
+                    </div>
+                </div>
                     <hr class="mt-1 w-80 m-auto">
                     <div>
-                        <span class="px-2 py-1 block text-gray-500">January 01, 2023 | 23 cubic meter</span>
+                        <span class="px-2 py-1 block text-sm text-gray-500">January 01, 2023 | 23 cubic meter</span>
                     </div>
 
                 </div>
@@ -73,7 +79,7 @@
                            </div>
                            <div>
                             <span>P. 00</span><br>
-                                <span class="font-bold text-lg">Angelo P. Mayuga</span>
+                                <span class="font-bold text-lg">Kulas Capernecus</span>
                                 <br>
                                 <span class="text-gray-500">Previous Usage</span>
                                 <br>
@@ -96,11 +102,14 @@
     </div>
 </template>
 <script>
+import { firebase } from '@/main';
+
     export default{
         name:"MeterPage",
         mounted: async function(){
             let hover = this.$refs.hover;
             this.navigation['hover_line'] = hover;
+            this.loadCustomers();
            
         },
             props:{
@@ -117,6 +126,9 @@
                }
             }
         },methods:{
+            selectCustomer(meter_id){
+                    alert(meter_id)
+            },
             navigate(navname){
                 this.navigation['list'] = false;
                 this.navigation['custom'] = false;
@@ -128,22 +140,42 @@
                     this.navigation['hover_line'].style.transform = 'translateX(110%)';
                 }
                 
+            },
+            async loadCustomers(){
+                this.$emit('set-loader', true);
+            let users = await firebase.getObjects('userAccount');
+            this.$emit('set-loader', false);
+            let customers = [];
+
+            if(users){
+              users.forEach(user =>{
+                    if(user.type === 'customer'){
+                        customers.push(user);
+                    }
+              });
+              this.customers = customers;
             }
+           
+            
+        },
         }, 
+       
         data(){
             return{
                 navigation:{
                     list:true,
                     custom:false,
                     hover_line: ""
-                }
+                },
+              customers:[]
+                
             }
         }
     }
 </script>
 <style scoped>
 .box{
-    width:95%;  border-left: 4px solid #3B82F6; border-radius: 4px;  animation: left-slide .2s linear;
+    width:95%; height: auto;  border-left: 4px solid #3B82F6; border-radius: 4px;  animation: left-slide .2s linear;
 }
 @keyframes left-slide {
     from{

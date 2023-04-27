@@ -26,23 +26,7 @@
         focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="firstname"
         aria-describedby="emailHelp" placeholder="Enter first name">
 
-        <label for="middlename" class="form-label inline-block mb-2 text-gray-700">Middle Name</label>
-      <input v-model="form['middle_name']" type="text" class="form-control
-        block
-        w-full
-        px-3
-        py-1.5
-        text-base
-        font-normal
-        text-gray-700
-        bg-white bg-clip-padding
-        border border-solid border-gray-300
-        rounded
-        transition
-        ease-in-out
-        m-0
-        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="middlename"
-        aria-describedby="emailHelp" placeholder="Enter middle name">
+       
         <label for="lastname" class="form-label inline-block mb-2 text-gray-700">Last Name</label>
       <input v-model="form['last_name']" type="text" class="form-control
         block
@@ -60,6 +44,24 @@
         m-0
         focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="lastname"
         aria-describedby="emailHelp" placeholder="Enter last name">
+
+        <label for="lastname" class="form-label inline-block mb-2 text-gray-700">Meter ID</label>
+      <input v-model="form['meter_id']" type="text" class="form-control
+        block
+        w-full
+        px-3
+        py-1.5
+        text-base
+        font-normal
+        text-gray-700
+        bg-white bg-clip-padding
+        border border-solid border-gray-300
+        rounded
+        transition
+        ease-in-out
+        m-0
+        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="lastname"
+        aria-describedby="emailHelp" placeholder="Enter meter id">
 
         <label for="street" class="form-label inline-block mb-2 text-gray-700">Street</label>
       <input v-model="form['street']" type="text" class="form-control
@@ -194,12 +196,12 @@
        
        
       <label for="password" class="form-label inline-block mb-2 text-gray-700">Password</label>
-      <input v-model="form['password']" type="password" class="form-control
-        block
-        w-full
+      <input  class="form-control 
+        w-52
         px-3
         py-1.5
         text-base
+       
         font-normal
         text-gray-700
         bg-white bg-clip-padding
@@ -208,29 +210,31 @@
         transition
         ease-in-out
         m-0
-        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInputEmail1"
-        aria-describedby="emailHelp" placeholder="Enter password">
+        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInputPassword1"
+        placeholder="Password" :type="[pass_stat?'text':'password']" v-model="form['password']">
+       <i @click="pass_stat = !pass_stat" :class="[pass_stat?'bi bi-eye-fill':'bi bi-eye-slash-fill']" class=" inline-block px-3 py-1.5 border rounded cursor-pointer"></i>
     
    
                    
-                    <label for="exampleInputPassword1" class="form-label inline-block mb-2 text-gray-700">Re-enter Password</label>
-                    <input v-model="form['reenter']" type="password" class="form-control block
-                        w-full
-                        px-3
-                        py-1.5
-                        text-base
-                        font-normal
-                        text-gray-700
-                        bg-white bg-clip-padding
-                        border border-solid border-gray-300
-                        rounded
-                        transition
-                        ease-in-out
-                        m-0
-                        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInputPassword1"
-                        placeholder="Re-enter Password">
-
-
+        <label for="exampleInputPassword1" class="form-label inline-block mb-2 text-gray-700">Re-enter Password</label>
+        <input  class="form-control 
+        w-52
+        px-3
+        py-1.5
+        text-base
+       
+        font-normal
+        text-gray-700
+        bg-white bg-clip-padding
+        border border-solid border-gray-300
+        rounded
+        transition
+        ease-in-out
+        m-0
+        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInputPassword1"
+        placeholder="Password" :type="[pass_stat_r?'text':'password']" v-model="form['reenter']">
+       <i @click="pass_stat_r = !pass_stat_r" :class="[pass_stat_r?'bi bi-eye-fill':'bi bi-eye-slash-fill']" class=" inline-block px-3 py-1.5 border rounded cursor-pointer"></i>
+                  
                         <div class="flex justify-start mt-3">
                         <input v-model="form['terms']" type="checkbox"/>
                         <small for="exampleInputPassword1" class="form-label inline-block ml-2 text-gray-700">I agree with the <button class="text-blue-500 select-none cursor-pointer">Terms & Conditions</button>.</small>
@@ -304,10 +308,11 @@ export default{
     name:"SignUpPage",
     data(){
         return{
+          pass_stat_r:false,
+          pass_stat:false,
             default_nav:true,
             form:{
                 first_name:"",
-                middle_name:"",
                 last_name:"",
                 street:"",
                 baranggay:"",
@@ -318,7 +323,9 @@ export default{
                 password:"",
                 reenter:"",
                 terms:"",
-                uid:""
+                uid:"",
+                meter_id:'',
+                type:'customer'
             }
         }
         
@@ -327,9 +334,9 @@ export default{
       
             let error = validate([
                 {type:'text', key:"First name", value:this.form['first_name']},
-                {type:'text', key:"Middle name", value:this.form['middle_name']},
                 {type:'text', key:"Last name", value:this.form['last_name']},
                 {type:'text', key:"Street", value:this.form['street']},
+                {type:'text', key:"Meter id", value:this.form['meter_id']},
                 {type:'text', key:"Barangay", value:this.form['baranggay']},
                 {type:'text', key:"Municipality", value:this.form['municipality']},
                 {type:'text', key:"Province", value:this.form['province']},
@@ -342,21 +349,29 @@ export default{
                 if(this.form['password'] == this.form['reenter']){
                     if(this.form['terms']){
                       this.$emit('set-loader',true);
-                        let execute = await firebase.signup(this.form);
-                        if(execute == true){
-                            this.$toast.success("Signup successfully!");
-                        }else{
-                            this.$toast.error(errorMessage(execute));
+                      delete this.form.terms;
+                      delete this.form.reenter;
+
+                        let signup = await firebase.signup(this.form);
+                        if(signup && signup.stat == true){
+                            this.$toast.success("Signup successfully!", {position: 'top-right'});
+                            if(signup.value && signup.uid){
+                               await firebase.insert(`customers/${signup.uid}`,signup.value);
+                               setTimeout(()=>{window.location.reload()},1000);
+                            }
+                           
+                        }else if(signup && signup.stat == false){
+                            this.$toast.error(errorMessage(signup.message),{position: 'top-right'});
                         }
                         
                     }else{
-                        this.$toast.error("Please see the terms & condition first!");
+                        this.$toast.error("Please see the terms & condition first!",{position: 'top-right'});
                     }
                 }else{
-                    this.$toast.error("You enter not match in your password!");
+                    this.$toast.error("You enter not match in your password!",{position: 'top-right'});
                 }
             }else{
-                this.$toast.error(error);
+                this.$toast.error(error,{position: 'top-right'});
             }
             this.$emit('set-loader',false);
         }

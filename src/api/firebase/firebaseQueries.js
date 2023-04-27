@@ -3,6 +3,9 @@ import {getAnalytics  } from "firebase/analytics";
 import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, onAuthStateChanged,signOut,sendPasswordResetEmail } from "firebase/auth";
 import {app} from './firebaseConfig.js';
 import { getStorage, getDownloadURL, ref as sRef,  uploadBytesResumable} from "firebase/storage";
+
+
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
@@ -14,23 +17,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
         this.analytics = getAnalytics(app);
         this.auth = getAuth();
     }
-    async getUserInfo(){
-        return await new Promise((resolve)=>{
-            const url = new URL(window.location.href);
-            const user_uid = url.searchParams.get("uid");
-            let users = [];
-            async function getUser(){
-                users = await this.getObject("userAccount");
-            }
-            getUser();
-           
-            users.forEach(element =>{
-                if(element.uid === user_uid){
-                    resolve(element);
-                }
-            });
-        });
-    }
+
 
     async auth_user(){
         return await new Promise((resolve)=>{
@@ -63,16 +50,14 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
           data.password = '';
           data.uid = user['uid'];
             set(ref(this.db, "userAccount/"+user.uid), data).then(()=>{
-                    resolve(true);
+                    resolve({stat:true, value:data, uid:user.uid});
             }).catch(async (error)=>{
                 
                 if(error.message === 'Error: Client is offline.'){
                     await delay(2000);
                        this.signup(data);
                 }else{
-                    resolve(error.message);
-                   
-                   
+                    resolve({stat:false, message:error.message});
                 }
             })
 
@@ -81,7 +66,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
                 await delay(2000);
                    this.signup(data);
             }else{
-                resolve(error.message);
+                resolve({stat:false, message:error.message});
                
                 
             }
@@ -89,8 +74,6 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
         }
     )}
-
-
 
  
     async signin(email, password){
@@ -201,7 +184,6 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     }
     async getImage(path, name, ext){
         return await new Promise((resolve)=>{
-      
         getDownloadURL(sRef(this.storage, path+'/'+name+'.'+ext))
         .then((url) => {
         
@@ -224,7 +206,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     })
     }
 
-    async getObject(path){
+    async getObjects(path){
         return await new Promise((resolve)=>{
             get(child(ref(this.db), path)).then((snapshot)=>{
                 if(snapshot.exists()){
@@ -239,7 +221,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
             }).catch(async(error)=>{
                 if(error.message === 'Error: Client is offline.'){
                     await delay(2000);
-                       this.getObject(path);
+                       this.getObjects(path);
                 }else{
                     alert(error.message);
                     resolve(false);
@@ -253,7 +235,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     
         return await new Promise((resolve)=>{
             const metaData = {
-                contentType: image.type
+                contentType: image.type,
+                
             }
            
             const storageRef = sRef(this.storage, 'users/'+name+'.png');
@@ -273,6 +256,24 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
     
         
         })
+    }
+    async getUserInfo(uid){
+        return new Promise((resolve)=>{
+            const temp_object = async (path) =>{
+                return await this.getObjects(path);
+            }
+            
+            async function searchUsers() {
+                let users = await temp_object('userAccount');
+                for(let user of users){
+                    if(user.uid === uid){
+                        resolve(user);
+                        break;
+                    }
+                }
+            }
+            searchUsers();
+        });
     }
 
 

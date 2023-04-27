@@ -9,10 +9,10 @@
         <div class="rounded-full w-3 h-3 mt-8 float-right ml-8 bg-blue-500 bottom-2 "></div>
       </div>
       <div class="w-full flex justify-center ">
-        <img style="z-index: 90;" class="w-36 h-36 rounded-full border-blue-500 border-4" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu_-9C12h7JKdb02jgBDNiFgHWTp04Xbud_ZFS8xnjIylg-7wIPfixzgB5f6NT76T5R6M&usqp=CAU">
+        <img style="z-index: 90;" class="w-36 h-36 rounded-full border-blue-500 border-4" :src="img_profile" alt="Profile Image">
       </div>
       <div class="w-full flex justify-center ">
-          <span class="text-xl font-bold">Marian Mayuga</span>
+          <span class="text-xl font-bold">Roberto Roberta</span>
       </div>
 
       <div class="w-full flex justify-center">

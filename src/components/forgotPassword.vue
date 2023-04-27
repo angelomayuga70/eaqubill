@@ -24,7 +24,7 @@
 </template>
 
 <script>
-    import {firebase, validate, errorMessage} from '@/main.js';
+import {firebase, validate, errorMessage} from '@/main.js';
 
 
 export default{
@@ -34,12 +34,12 @@ export default{
             let error = validate([{type:'email', key:"Email", value:this.email}]);
             if(!error){
                 this.$emit('set-loader',true);
-                let execute = await firebase.resetPassword(this.email);
-                if(execute == true){
+                let reset_pass = await firebase.resetPassword(this.email);
+                if(reset_pass == true){
                     this.$toast.success('The reset password link has already been sent to your email!');
                     this.closeModal();
                 }else{
-                    this.$toast.error(errorMessage(execute));
+                    this.$toast.error(errorMessage(reset_pass));
                 }
             }else{
                 this.$toast.error(error);

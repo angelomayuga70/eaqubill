@@ -32,12 +32,13 @@
         else.</small>
     </div>
     <div class="form-group mb-6">
-      <label for="exampleInputPassword1" class="form-label inline-block mb-2 text-gray-700">Password</label>
-      <input type="password" class="form-control block
-        w-full
+      <label for="exampleInputPassword1" class="form-label  mb-2 block text-gray-700">Password</label>
+      <input  class="form-control 
+        w-52
         px-3
         py-1.5
         text-base
+       
         font-normal
         text-gray-700
         bg-white bg-clip-padding
@@ -47,13 +48,14 @@
         ease-in-out
         m-0
         focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="exampleInputPassword1"
-        placeholder="Password" v-model="password">
-       
+        placeholder="Password" :type="[pass_stat?'text':'password']" v-model="password">
+       <i @click="pass_stat = !pass_stat" :class="[pass_stat?'bi bi-eye-fill':'bi bi-eye-slash-fill']" class=" inline-block px-3 py-1.5 border rounded cursor-pointer"></i>
     </div>
     
     <div class="form-group form-check mb-3">
       <label class="form-check-label inline-block cursor-pointer  select-none text-blue-500" @click="$emit('trigger-modal',true)" for="exampleCheck1">Forgot Password?</label>
     </div>
+    
     <button type="flat" class="
       px-6
       py-2.5
@@ -89,15 +91,16 @@ export default{
       
     },
     methods:{
+        
         async login(){
-            let error = validate([{key:'email', value:this.username, type:'email'}, {key:'password', value:this.password}]);
+            let error = validate([{key:'Email', value:this.username, type:'email'}, {key:'Password', value:this.password}]);
             if(!error){
                 this.$emit('set-loader',true);
                 const signin = await firebase.signin(this.username,this.password);
                 if(signin['stat']== true){
                    window.location.reload();
                 }else{
-                    this.$toast.error(errorMessage(signin['value']));
+                    this.$toast.error(errorMessage(signin['value']),{position: 'top-right'});
                 }
              
             }else{
@@ -119,7 +122,8 @@ export default{
     data(){
         return{
             username:"",
-            password:""
+            password:"",
+            pass_stat:false
     }
     }
 }

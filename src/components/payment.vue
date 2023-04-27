@@ -22,8 +22,8 @@
                 </div>
              
     </div>
-   
-    <div class="flex justify-center">
+   <div class="box-height ">
+    <div class="flex justify-center ">
       
 
                     <div class="mt-8  rounded-lg block justify-center items-center overflow-hidden">
@@ -37,8 +37,12 @@
                         <button class=" px-4 py-2 bg-blue-500 text-white font-bold rounded shadow-xl cursor-pointer mt-3">Proceed to Payment</button>
                     </div>
 </div>
+</div>
 </template>
 <script>
+// import axios from 'axios';
+
+
     export default{
         name:"PaymentPage",
         data(){
@@ -50,5 +54,9 @@
     }
 </script>
 <style scoped>
+.box-height{
+    height: calc(100vh - 24rem);
+    overflow-y: scroll;
+}
 
 </style>
