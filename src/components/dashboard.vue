@@ -2,7 +2,7 @@
     <div>
         <div style="border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;" class="h-44  w-full bg-blue-500 py-4 px-4 -mt-2 flex justify-between shadow-xl ">
             <span class="text-lg font-bold text-white py-3 "> <i class="bi bi-ui-checks-grid"></i> &nbsp;DashBoard</span>
-            <img class="w-12 h-12 rounded-full" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu_-9C12h7JKdb02jgBDNiFgHWTp04Xbud_ZFS8xnjIylg-7wIPfixzgB5f6NT76T5R6M&usqp=CAU">
+            <img class="w-12 h-12 rounded-full" :src="user.img_url?user.img_url:user_defaultimg">
             
         </div>
         <div style="width: 89%;" class="h-52  bg-white m-auto -mt-28 shadow-xl rounded-xl block">
@@ -56,11 +56,13 @@
 </template>
 <script> 
     import ApexCharts from 'apexcharts';
+    import {user_defaultimg} from '../main'
 
     export default{
         name:"DashBoard",
         props:{
-            slide : Boolean
+            slide : Boolean,
+            user:Object
         },
         watch:{
             slide(){
@@ -132,7 +134,7 @@
         },
         data(){
             return{
-           
+               default_img: user_defaultimg()
         }
         },methods:{
          

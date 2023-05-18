@@ -44,6 +44,10 @@
                             <label class="text-xs text-gray-600" for="fname">Email</label>
                             <input readonly v-model="user.email"  class="py-1 px-2 text-xs border-2 w-36 rounded border-blue-500 " name="fname" id="fname" type="text">
                         </div>
+                        <div class="px-2 py-1">
+                            <label class="text-xs text-gray-600" for="fname">Meter ID</label>
+                            <input  v-model="user.meter_id"  class="py-1 px-2 text-xs border-2 w-36 rounded border-blue-500 " name="fname" id="fname" type="text">
+                        </div>
                     
                 </div>
                     <div>
@@ -118,7 +122,8 @@
                    { key:"barangay", value: this.user.address.barangay },
                    { key:"municipality", value: this.user.address.municipality },
                    { key:"province", value: this.user.address.province },
-                   { key:"phone", value: this.user.phone }
+                   { key:"phone", value: this.user.phone },
+                   { key:"meter id", value: this.user.meter_id }
             ]);
             let img_path = null;
             if(this.user.profile_img){
@@ -137,10 +142,23 @@
                     municipality:this.user.address.municipality,
                     province:this.user.address.province,
                     phone_number:this.user.phone,
-                    img_url:img_path
+                    img_url:img_path??this.user.img_url,
+                    meter_id:this.user.meter_id,
+                  
                 })
                 if(update){
-                    this.$toast.success('Record update.',{position: 'top-right'});
+                    await firebase.update_value(`customers/${this.user.uid}`,{
+                        first_name:this.user.first_name,
+                        last_name:this.user.last_name,
+                        street:this.user.address.street,
+                        baranggay:this.user.address.barangay,
+                        municipality:this.user.address.municipality,
+                        province:this.user.address.province,
+                        phone_number:this.user.phone,
+                        img_url:img_path??this.user.img_url,
+                        meter_id:this.user.meter_id
+                    })
+                    this.$toast.success('Record update',{position: 'top-right'});
                     this.refresh();
                 }
             }else{
@@ -168,6 +186,7 @@
                 this.user.address.province = user.province;
                 this.user.phone = user.phone_number;
                 this.user.img_url = user.img_url;
+                this.user.meter_id = user.meter_id
             }
 
         },
@@ -201,6 +220,7 @@
                 email:null,
                 phone:null,
                 img_url:null,
+                meter_id:null,
                 default_img : localStorage.getItem('img/eaquabill/defaultimg/profile')
            },
           

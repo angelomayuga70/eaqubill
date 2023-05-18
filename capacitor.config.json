@@ -1,0 +1,8 @@
+{
+  "appId": "com.capstone.eaquabill2023",
+  "appName": "eaquabill",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

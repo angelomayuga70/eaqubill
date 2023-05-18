@@ -1,7 +1,13 @@
 class Storage{
         
         constructor(){
-            this.dir = 'aquabill/storage/';
+            this.dir = '1Ade1232gAgwggiTYTgatewTvTasy/aquabill2023/storage/';
+        }
+        setItem(key, value){
+            localStorage.setItem(this.dir+key, value);
+        }
+        getItem(key){
+            return localStorage.getItem(this.dir+key, key);
         }
         setJSON(path  ='', json = {}){
             localStorage.setItem(this.dir+path, JSON.stringify(json));
@@ -16,7 +22,7 @@ class Storage{
         createList(path = '', lists = []){
                 localStorage.setItem(this.dir+'list/'+path, JSON.stringify(lists));
     
-        }
+        } 
         deleteOnList(path, id){
             const key = this.dir+'list/'+path;
             let lists = [], result = [];

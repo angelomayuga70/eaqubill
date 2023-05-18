@@ -1,5 +1,5 @@
 <template>
-  <div class="select-none overflow-hidden">
+  <div class="select-none overflow-y-scroll">
    
     <div>
       <ForgotPassword  @set-loader="setLoader"  v-if="modal['forgotPassword']" @trigger-modal="modalStat" />
@@ -10,12 +10,11 @@
     <div  v-if="pages['sigin']">
       <LoginPage  @set-loader="setLoader" @trigger-modal="modalStat" @goto-page="Page" />
     </div>
-   
     <div v-if="pages['signup']">
       <SignUpPage @set-loader="setLoader" @goto-page="Page"/>
     </div>
     <div v-if="pages['home']">
-      <WebPage :profile_img="user.img_url" @set-loader="setLoader" :question_box="modal.qbox_val" />
+      <WebPage :profile_img="user.img_url" @set-loader="setLoader" :question_box="modal.qbox_val"/>
     </div>
     
   </div>
@@ -31,7 +30,9 @@ import ForgotPassword from './components/forgotPassword.vue';
 import PageLoader from './components/loader.vue'
 
 
-import {firebase} from '@/main.js';
+
+
+import {firebase, storage, isUserOnline} from '@/main.js';
 
 
 export default {
@@ -71,23 +72,38 @@ export default {
     }
   },
   mounted:async function(){
-    if(navigator.onLine){
+    if(await isUserOnline()){
+      this.setLoader(true);
       let auth = await firebase.auth_user();
-      
         if(auth){
           let user_info = await firebase.getUserInfo(auth.uid);
+          
           this.user = user_info;
+          storage.setJSON('auth_user', user_info);
           
           this.clearPage();
           this.pages['home'] = true;
+        
 
         }else{
           this.clearPage();
           this.pages['sigin'] = true;
-          
         }
+        this.setLoader(false);
+        this.$toast.success('You are online', {position:'top-right'});
     }else{
-      //dxf
+      let user_info = storage.getJSON('auth_user');
+      if(user_info){
+        this.user = user_info
+            
+        this.clearPage();
+          this.pages['home'] = true;
+
+      }else{
+        this.clearPage();
+          this.pages['sigin'] = true;
+      }
+        this.$toast.error('You are offline some features are not available',  {position:'top-right'});
     }
 
     {

@@ -6,12 +6,26 @@ import toastr from 'toastr';
 import {Firebase} from "@/api/firebase/firebaseQueries";
 import { Storage } from '@/storage/storage'
 import 'toastr/build/toastr.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Network } from '@capacitor/network';
 
 
+// Network.addListener('networkStatusChange', () => {
+//    window.location.reload();
+// });
+
+
+async function isUserOnline() {
+        return (await Network.getStatus()).connected;
+ }
+
+
+  
 
 let firebase = new Firebase(), storage = new Storage();
 function validate(inputs){
     for(let input of inputs){
+        
         if(!input['value']){
             return  input['key']+" is required!";
         }
@@ -21,6 +35,11 @@ function validate(inputs){
             if (!input['value'].match(validRegex)) {
                 return "Invalid email!";
             } 
+        }
+        if(input['type'] == 'number'){
+            if (!/^\d+$/.test(input['value'])) {
+                return 'Invalid value for '+ input['key']+"!";
+            }
         }
         if(input['type']=='contact'){  
             if(isNaN(parseFloat(input['value'])) && isFinite(input['value'])){
@@ -64,18 +83,24 @@ function closeCustomerModal(){
             style.remove();
         },400);
 }
-
+const user_defaultimg = () =>{return localStorage.getItem('img/eaquabill/defaultimg/profile').toString();};
 
 async function addCustomerModal(){
     const style = document.createElement('style');
     style.textContent = `
     .modal{
         background: rgba(0, 0, 0, 0.233);
+      
+  
       }
       .modal .box{
         width: 90%;
-        height: calc(35rem);
+        height: 25rem;
         animation: slidein .4s;
+        align-items:center;
+        display:block;
+        margin:auto;
+        margin-top: 90px;
       }
       
       @keyframes slidein {
@@ -106,10 +131,10 @@ async function addCustomerModal(){
     form_container.className = "m-auto";
     form_container.style.width = "90%";
  let fields = {
-                'First Name':'first-name',
-                'Last Name':'last-name',
+                'Full Name':'full-name',
+               
                 'Meter ID':'meter-id',
-                'Contact':'contact',
+              
                 "Address":"address"
                 };
  let field_keys = Object.keys(fields);
@@ -171,24 +196,24 @@ return await new Promise((res)=>{
     }
     submit_btn.onclick = async () =>{
         let error = validate([
-            {key: "first name", value: document.getElementById('first-name').value},
-            {key: "last name", value: document.getElementById('last-name').value},
+            {key: "full name", value: document.getElementById('full-name').value},
+        
             {key: "meter id", value: document.getElementById('meter-id')},
-            {key: "contact", value: document.getElementById('contact').value},
+          
             {key: "address", value: document.getElementById('address').value},
-        ])
+        ]);
 
         if(!error){
             let id = await char_randomizer();
-            let form = {}
+            let form = {};
+            
             for(const key of field_keys){
-                form[key.replace(' ','_')] = document.getElementById(fields[key]).value.toString();
+                form[key.replace(' ','_').toLowerCase()] = document.getElementById(fields[key]).value.toString();
             }
-            form['id'] = id;
-          
+            form['uid'] = id;
             res(form);
         }else{
-            toastr.error(error,{position: 'top-right'});
+             toastr.error(error,{position: 'top-right'});
         }     
     }
 });
@@ -298,7 +323,18 @@ async function question_box(){
     
 }
 
-export {validate, firebase, errorMessage, question_box, storage, addCustomerModal, char_randomizer, closeCustomerModal}
+function getCurrentDate(format){
+    const date = new Date();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const y = date.getFullYear();
+    const d = date.getDate().toString().padStart(2, '0');
+    if(format == 'dd-mm-yyyy'){
+        return d+'-'+m+'-'+y;
+    }
+    
+}
+
+export {validate, firebase, errorMessage, question_box, user_defaultimg, storage, addCustomerModal, char_randomizer, closeCustomerModal, getCurrentDate, isUserOnline}
 
 createApp(App).use(Toaster).mount("#app");
 

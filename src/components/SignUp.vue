@@ -359,7 +359,6 @@ export default{
                                await firebase.insert(`customers/${signup.uid}`,signup.value);
                                setTimeout(()=>{window.location.reload()},1000);
                             }
-                           
                         }else if(signup && signup.stat == false){
                             this.$toast.error(errorMessage(signup.message),{position: 'top-right'});
                         }

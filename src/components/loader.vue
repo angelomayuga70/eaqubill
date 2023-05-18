@@ -1,7 +1,9 @@
 <template>
     <div  ref="loader" style="z-index: 999;  background-color: rgba(0, 0, 0, 0.182);" class="w-full h-screen panel absolute flex justify-center items-center">
         <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        <div class="absolute mt-10 text-xs text-blue-500">Loading</div>
     </div>
+    
 </template>
 <script>
 export default{

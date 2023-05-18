@@ -10,7 +10,7 @@ export function payWithGcash(amount) {
     mobile: "09278204051",
     redirect_url: YOUR_REDIRECT_URL,
   };
-
+ 
   const config = {
     headers: {
       'Content-Type': 'application/json',
